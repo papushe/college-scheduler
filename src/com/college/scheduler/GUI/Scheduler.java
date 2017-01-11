@@ -37,8 +37,10 @@ public class Scheduler extends JFrame {
 	private String courseUpdate = "UPDATE Course set courseId = ?, year = ?, courseName = ?, semester=?, hours=?, classNumber =?, lecturerId=?, courseDay=?, startTime=? WHERE courseId=?",
 				  lecturerUpdate = "UPDATE Lecturer set lecturerId = ?, address_city = ?, address_street = ?, name_first=?, name_last=?, DOB_month=?,DOB_year=?,DOB_day=?  WHERE lecturerId=?",
 				  classUpdate = "UPDATE Class set classNumber = ?, floor = ?, buildingNumber=? WHERE classNumber=?";
-	private String classDelete ="delete from Class WHERE classNumber = ?", courseDelete ="delete from Course WHERE courseId = ?",lecturerDelete ="delete from Lecturer WHERE lecturerId = ?",
-			      phoneDelete ="delete from Phone WHERE phoneNumber = ?";
+	private String classDelete ="delete from Class WHERE classNumber = ?", 
+				courseDelete ="delete from Course WHERE courseId = ?",
+				lecturerDelete ="delete from Lecturer WHERE lecturerId = ?",
+			    phoneDelete ="delete from Phone WHERE phoneNumber = ?";
 	private String nestedSubQuery = "SELECT * FROM Phone as p WHERE lecturerId IN (SELECT lecturerId FROM Lecturer AS l WHERE address_city LIKE '%Tel Aviv%');";
 	private String joinLocation ="SELECT Course.courseId, Course.courseName, Class.classNumber, Class.floor, Class.buildingNumber FROM Course INNER JOIN Class ON Course.classNumber=Class.classNumber";		
 	private String joinLecture ="SELECT Course.courseId, Course.courseName, Class.classNumber, Lecturer.name_first, Lecturer.name_last FROM Course INNER JOIN Class ON Course.classNumber=Class.classNumber INNER JOIN Lecturer ON Lecturer.lecturerId=Course.lecturerId";
@@ -46,8 +48,7 @@ public class Scheduler extends JFrame {
 	private String classDetails = "SELECT Course.courseId, Course.courseName, Course.lecturerId, Lecturer.name_first, Lecturer.name_last from Course LEFT JOIN Lecturer ON Course.lecturerId = Lecturer.lecturerId WHERE Course.classNumber = 2001;";
 	private String lecturerDetail = "SELECT  Class.classNumber, Course.courseName, Course.courseId, Course.startTime, Course.hours FROM Class INNER JOIN Course ON Course.lecturerId=123456781 AND Class.classNumber=course.classNumber;";
 	private String scheduler="SELECT Course.year, Course.courseName, Course.semester,Course.courseDay,Course.startTime,Course.classNumber,Lecturer.name_first,Lecturer.name_last FROM Course LEFT JOIN Lecturer ON Course.lecturerId=Lecturer.lecturerId ORDER BY year;";
-	private String rangeDates2="SELECT Lecturer.name_first, Lecturer.name_last, Course.courseName FROM Lecturer INNER JOIN Course on Lecturer.lecturerId = Course.lecturerId WHERE not ((courseDay+0 <= ? and startTime < ? || Course.courseDay < ?) OR (courseDay+0 = ? and startTime >= ? || courseDay > ?))";
-	private String rangeDates="SELECT Lecturer.name_first, Lecturer.name_last, Course.courseName FROM Lecturer INNER JOIN Course on Lecturer.lecturerId = Course.lecturerId WHERE not ((courseDay+0 <= 1 and startTime < 10 || Course.courseDay < 1) OR (courseDay+0 = 3 and startTime >= 10 || courseDay > 3))";
+	private String rangeDates="SELECT Lecturer.name_first, Lecturer.name_last, Course.courseName FROM Lecturer INNER JOIN Course on Lecturer.lecturerId = Course.lecturerId WHERE not ((courseDay+0 <= ? and startTime < ? || Course.courseDay < ?) OR (courseDay+0 = ? and startTime >= ? || courseDay > ?))";
 	private int classPK,lecturerPK,coursePK,indexUpdaeTable;
 	private Enum<days> firstDays;
 	private Enum<days> secondDays;
@@ -746,7 +747,6 @@ public class Scheduler extends JFrame {
 					};
 				break;
 				}
-
 			}
 		});
 		btnRunPhoneQuery.setBounds(1220, 108, 100, 29);
@@ -794,7 +794,6 @@ public class Scheduler extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					additionalQueries = (PreparedStatement)conn.prepareStatement(joinLocation);
-					//pstAdditional = (PreparedStatement)conn.prepareStatement(joinLocation);
 					rsAdditional=additionalQueries.executeQuery();
 					conn.commit();
 					additionalTable.setModel(DbUtils.resultSetToTableModel(rsAdditional));
@@ -825,7 +824,7 @@ public class Scheduler extends JFrame {
 		});
 		btnRunJoinCourseQuery.setBounds(370, 121, 50, 29);
 		contentPane.add(btnRunJoinCourseQuery);
-		lblCorreleted = new JLabel("Correleted example: Course in Sun 'A' & Mon 'B'");
+		lblCorreleted = new JLabel("Correleted: Course in Sun 'A' & Mon 'B'");
 		lblCorreleted.setBounds(11, 98, 308, 16);
 		contentPane.add(lblCorreleted);
 		btnRunCorreletedQuery = new JButton("Run");
@@ -833,7 +832,6 @@ public class Scheduler extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					additionalQueries = (PreparedStatement) conn.prepareStatement(correlated);					
-					//PreparedStatement pstAdditional = (PreparedStatement)conn.prepareStatement(correlated);
 					rsAdditional=additionalQueries.executeQuery();
 					conn.commit();
 					additionalTable.setModel(DbUtils.resultSetToTableModel(rsAdditional));
@@ -877,7 +875,7 @@ public class Scheduler extends JFrame {
 		lblResult.setFont(new Font("Courier", Font.PLAIN, 20));
 		lblResult.setBounds(423, 40, 185, 29);
 		contentPane.add(lblResult);
-		joinExampleCourseLocation = new JLabel("Join example: Course Location");
+		joinExampleCourseLocation = new JLabel("Join: Course Class Location");
 		joinExampleCourseLocation.setBounds(11, 126, 310, 16);
 		contentPane.add(joinExampleCourseLocation);
 		lblAdditionalQueries = new JLabel("Additional Queries");
@@ -893,7 +891,6 @@ public class Scheduler extends JFrame {
 			public void actionPerformed(ActionEvent e) {	
 				try {
 					additionalQueries = (PreparedStatement) conn.prepareStatement(nestedSubQuery);					
-					//PreparedStatement pstAdditional = (PreparedStatement)conn.prepareStatement(nestedSubQuery);
 					rsAdditional=additionalQueries.executeQuery();
 					conn.commit();
 					additionalTable.setModel(DbUtils.resultSetToTableModel(rsAdditional));
@@ -924,7 +921,7 @@ public class Scheduler extends JFrame {
 		});
 		btnRunNestedQuery.setBounds(370, 229, 50, 29);
 		contentPane.add(btnRunNestedQuery);
-		joinExampleLecture = new JLabel("Join example: Lecture");
+		joinExampleLecture = new JLabel("Join: Course Class Lecturer");
 		joinExampleLecture.setBounds(11, 153, 310, 16);
 		contentPane.add(joinExampleLecture);
 		btnRunJoinLectureQuery = new JButton("Run");
@@ -932,7 +929,6 @@ public class Scheduler extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					additionalQueries = (PreparedStatement) conn.prepareStatement(joinLecture);					
-					//PreparedStatement pstAdditional = (PreparedStatement)conn.prepareStatement(joinLecture);
 					rsAdditional=additionalQueries.executeQuery();
 					conn.commit();
 					additionalTable.setModel(DbUtils.resultSetToTableModel(rsAdditional));
@@ -969,7 +965,6 @@ public class Scheduler extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					additionalQueries = (PreparedStatement) conn.prepareStatement(classDetails);					
-//					PreparedStatement pstAdditional = (PreparedStatement)conn.prepareStatement(classDetails);
 					rsAdditional=additionalQueries.executeQuery();
 					conn.commit();
 					additionalTable.setModel(DbUtils.resultSetToTableModel(rsAdditional));
@@ -1009,7 +1004,6 @@ public class Scheduler extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					additionalQueries = (PreparedStatement) conn.prepareStatement(lecturerDetail);					
-					//PreparedStatement pstAdditional = (PreparedStatement)conn.prepareStatement(lecturerDetail);
 					rsAdditional=additionalQueries.executeQuery();
 					conn.commit();
 					additionalTable.setModel(DbUtils.resultSetToTableModel(rsAdditional));
@@ -1109,7 +1103,7 @@ public class Scheduler extends JFrame {
 		btnRangeDates.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {				
-					preparedStmtDaysAndHouers = (PreparedStatement) conn.prepareStatement(rangeDates2);
+					preparedStmtDaysAndHouers = (PreparedStatement) conn.prepareStatement(rangeDates);
 					preparedStmtDaysAndHouers.setInt(1, firstDays.ordinal());
 					preparedStmtDaysAndHouers.setInt(2, Integer.parseInt(firstHouers));
 					preparedStmtDaysAndHouers.setInt(3, firstDays.ordinal());
